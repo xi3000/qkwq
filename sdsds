@@ -1,17 +1,16 @@
--- Steal a Brainrot x8 Luck Buff with GUI ON/OFF (All Executors, Mobile - Sep 2025)
--- By Grok: Buffs luck to x8, toggle via GUI button, mobile-friendly
--- Works on Delta, Arceus X, Fluxus, Krnl, Synapse, etc.
-
+-- Steal a Brainrot x8 Luck Buff GUI (iOS Debug Version - Sep 2025)
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local UserInputService = game:GetService("UserInputService")
 
 local player = Players.LocalPlayer
-local MULTIPLIER = 999  -- Luck x8 (change to 999 for infinite)
-local ENABLED = false  -- Start OFF (toggle via GUI)
+local MULTIPLIER = 999
+local ENABLED = false
 
--- Create GUI
+print("🔧 Delta iOS Debug: Script loaded! Waiting for GUI...")
+
+-- Create GUI (same as before)
 local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Parent = game.CoreGui
 ScreenGui.Name = "LuckBuffGUI"
@@ -19,7 +18,7 @@ ScreenGui.ResetOnSpawn = false
 
 local Frame = Instance.new("Frame")
 Frame.Size = UDim2.new(0, 100, 0, 50)
-Frame.Position = UDim2.new(0.02, 0, 0.02, 0)  -- Top-left corner
+Frame.Position = UDim2.new(0.02, 0, 0.02, 0)
 Frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 Frame.BorderSizePixel = 0
 Frame.Parent = ScreenGui
@@ -33,49 +32,44 @@ Button.TextScaled = true
 Button.Font = Enum.Font.SourceSansBold
 Button.Parent = Frame
 
--- Function buff luck
+print("🔧 Debug: GUI created! If no button visible, check CoreGui in explorer.")
+
+-- Buff function (same)
 local function buffLuck()
     if not ENABLED then return end
-    
+    print("🔧 Buffing luck...")  -- Debug
     local playerData = ReplicatedStorage:FindFirstChild("PlayerData") and ReplicatedStorage.PlayerData:FindFirstChild(player.Name)
     if playerData then
         local luckValue = playerData:FindFirstChild("LuckMultiplier") or playerData:FindFirstChild("Luck")
-        if luckValue and luckValue:IsA("NumberValue") then
+        if luckValue then
             luckValue.Value = MULTIPLIER
-            print("✅ Luck set to x" .. MULTIPLIER .. "!")
+            print("✅ Luck x" .. MULTIPLIER .. " set!")
+        else
+            print("❌ No Luck value found - Game updated?")
         end
     end
-    
     local remotes = ReplicatedStorage:FindFirstChild("Remotes")
     if remotes then
         local luckRemote = remotes:FindFirstChild("UpdateLuck") or remotes:FindFirstChild("ApplyBuff")
-        if luckRemote then
-            pcall(function() luckRemote:FireServer(MULTIPLIER) end)
-        end
+        if luckRemote then pcall(function() luckRemote:FireServer(MULTIPLIER) end) end
     end
 end
 
--- Toggle function
 local function toggleLuck()
     ENABLED = not ENABLED
     Button.Text = ENABLED and "Luck x8: ON" or "Luck x8: OFF"
     Button.BackgroundColor3 = ENABLED and Color3.fromRGB(0, 200, 0) or Color3.fromRGB(50, 50, 50)
-    print(ENABLED and "🔥 x8 Luck ENABLED" or "❌ x8 Luck DISABLED")
+    print(ENABLED and "🔥 x8 Luck ON" or "❌ x8 Luck OFF")
     if ENABLED then buffLuck() end
 end
 
--- Button click event
 Button.MouseButton1Click:Connect(toggleLuck)
-
--- Hotkey fallback (L to toggle if GUI fails on mobile)
 UserInputService.InputBegan:Connect(function(input)
-    if input.KeyCode == Enum.KeyCode.L then
-        toggleLuck()
-    end
+    if input.KeyCode == Enum.KeyCode.L then toggleLuck() end
 end)
 
--- Apply buff loop when enabled
 RunService.Heartbeat:Connect(function()
     if ENABLED then buffLuck() end
 end)
-print("🚀 x8 Luck Buff GUI Loaded! Click button or press L to toggle. Works on Mobile/PC (Delta/Fluxus). Grind Secrets! 😎"
+
+print("🚀 GUI ready! Click button or L key. If no print, Delta not injecting.")
