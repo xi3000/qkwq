@@ -8,7 +8,7 @@ local RunService = game:GetService("RunService")
 local UserInputService = game:GetService("UserInputService")
 
 local player = Players.LocalPlayer
-local MULTIPLIER = 8  -- Luck x8 (change to 999 for infinite)
+local MULTIPLIER = 999  -- Luck x8 (change to 999 for infinite)
 local ENABLED = false  -- Start OFF (toggle via GUI)
 
 -- Create GUI
